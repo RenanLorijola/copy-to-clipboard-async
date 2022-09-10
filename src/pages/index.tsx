@@ -1,9 +1,18 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import {
+  MouseEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 const Home: NextPage = () => {
   const [state, setState] = useState("default");
+
+  const linkValue = useRef("");
+  const button = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -14,6 +23,28 @@ const Home: NextPage = () => {
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const handleCopyWithDispatch = async (event: Event) => {
+      if (linkValue.current) {
+        copy(linkValue.current);
+        linkValue.current = "";
+        return;
+      }
+      if (button.current) {
+        const res = await fetch(
+          "https://jsonplaceholder.typicode.com/todos/2"
+        ).then((it) => it.json());
+        linkValue.current = res.title;
+        button.current.dispatchEvent(event);
+      }
+    };
+    const btnElement = button.current;
+    btnElement?.addEventListener("click", handleCopyWithDispatch);
+    return () => {
+      btnElement?.removeEventListener("click", handleCopyWithDispatch);
+    };
+  }, [button]);
 
   const copy = (text: string) => {
     window.navigator.clipboard
@@ -63,6 +94,9 @@ const Home: NextPage = () => {
       </button>
       <button className="px-2 bg-black text-white" onClick={handleCopyState}>
         botao copiando do estado
+      </button>
+      <button ref={button} className="px-2 bg-black text-white">
+        botao com dispatchEvent
       </button>
     </div>
   );
