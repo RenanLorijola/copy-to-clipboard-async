@@ -140,7 +140,7 @@ const Home = () => {
       >
         botao com clipboard item
       </button>
-      <button onClick={clipboardUserAgent} className="px-2 bg-green text-white">
+      <button onClick={clipboardUserAgent} className="px-2 bg-black text-white">
         botao copy baseado no agent
       </button>
     </div>
