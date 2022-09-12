@@ -1,8 +1,8 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 
-const Home: NextPage = () => {
+const Home = () => {
   const [state, setState] = useState("default");
 
   const linkValue = useRef("");
@@ -68,16 +68,12 @@ const Home: NextPage = () => {
     copy("copy state " + state);
   };
 
-  const copyWithClipboardItem = () => {
+  const copyPromise = (promise: Promise<any>) => {
     navigator.clipboard
       .write([
         new ClipboardItem({
           "text/plain": new Promise(async (resolve) => {
-            resolve(
-              await fetch("https://jsonplaceholder.typicode.com/todos/5")
-                .then((it) => it.json())
-                .then((it) => it.title)
-            );
+            resolve(await promise);
           }),
         }),
       ])
@@ -85,6 +81,32 @@ const Home: NextPage = () => {
       .catch((err) => {
         alert("erro ao copiar"), console.log(err);
       });
+  };
+
+  const copyWithClipboardItem = () => {
+    copyPromise(
+      fetch("https://jsonplaceholder.typicode.com/todos/5")
+        .then((it) => it.json())
+        .then((it) => it.title)
+    );
+  };
+
+  const clipboardUserAgent = async () => {
+    function detected(regex: RegExp): boolean {
+      const userAgent = window?.navigator.userAgent;
+      return new RegExp(regex).test(userAgent);
+    }
+
+    const isSafari = detected(/safari/i) && !detected(/chrome|chromium|crios/i);
+
+    const promise = fetch("https://jsonplaceholder.typicode.com/todos/6")
+      .then((it) => it.json())
+      .then((it) => it.title);
+    if (isSafari) {
+      copyPromise(promise);
+    } else {
+      copy(await promise);
+    }
   };
 
   return (
@@ -117,6 +139,9 @@ const Home: NextPage = () => {
         className="px-2 bg-black text-white"
       >
         botao com clipboard item
+      </button>
+      <button onClick={clipboardUserAgent} className="px-2 bg-green text-white">
+        botao copy baseado no agent
       </button>
     </div>
   );
