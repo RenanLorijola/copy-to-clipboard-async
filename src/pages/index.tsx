@@ -27,7 +27,7 @@ const Home: NextPage = () => {
       }
       if (button.current) {
         const res = await fetch(
-          "https://jsonplaceholder.typicode.com/todos/2"
+          "https://jsonplaceholder.typicode.com/todos/4"
         ).then((it) => it.json());
         linkValue.current = res.title;
         button.current.dispatchEvent(event);
@@ -74,7 +74,7 @@ const Home: NextPage = () => {
         new ClipboardItem({
           "text/plain": new Promise(async (resolve) => {
             resolve(
-              await fetch("https://jsonplaceholder.typicode.com/todos/2")
+              await fetch("https://jsonplaceholder.typicode.com/todos/5")
                 .then((it) => it.json())
                 .then((it) => it.title)
             );
