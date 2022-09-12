@@ -1,12 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {
-  MouseEvent,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Home: NextPage = () => {
   const [state, setState] = useState("default");
@@ -73,6 +67,26 @@ const Home: NextPage = () => {
   const handleCopyState = () => {
     copy("copy state " + state);
   };
+
+  const copyWithClipboardItem = () => {
+    navigator.clipboard
+      .write([
+        new ClipboardItem({
+          "text/plain": new Promise(async (resolve) => {
+            resolve(
+              await fetch("https://jsonplaceholder.typicode.com/todos/2")
+                .then((it) => it.json())
+                .then((it) => it.title)
+            );
+          }),
+        }),
+      ])
+      .then((_) => alert("copiado com sucesso"))
+      .catch((err) => {
+        alert("erro ao copiar"), console.log(err);
+      });
+  };
+
   return (
     <div className="flex flex-col justify-center items-center gap-2 w-screen h-screen">
       <Head>
@@ -97,6 +111,12 @@ const Home: NextPage = () => {
       </button>
       <button ref={button} className="px-2 bg-black text-white">
         botao com dispatchEvent
+      </button>
+      <button
+        onClick={copyWithClipboardItem}
+        className="px-2 bg-black text-white"
+      >
+        botao com clipboard item
       </button>
     </div>
   );
