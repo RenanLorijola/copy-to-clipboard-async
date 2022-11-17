@@ -33,7 +33,7 @@ const Home = () => {
 
     const promise = fetch("https://jsonplaceholder.typicode.com/todos/6")
       .then((it) => it.json())
-      .then((it) => it.title);
+      .then((it) => `https://google.com.br/search?q=${it.title}`);
     if (isSafari) {
       copyPromise(promise);
     } else {
@@ -41,23 +41,57 @@ const Home = () => {
     }
   };
 
-  const copyShare = async () => {
+  const copyShareUrl = async () => {
     try {
-      if (!navigator.share) {
-        alert("Impossível usar o share nesse dispositivo");
-        return;
-      }
       const { title } = await fetch(
         "https://jsonplaceholder.typicode.com/todos/6"
       ).then((it) => it.json());
       const shareData = {
-        title: `https://google.com.br/search?q=${title}`,
         url: `https://google.com.br/search?q=${title}`,
       };
       await navigator.share(shareData);
       alert("copiado com sucesso");
     } catch (err) {
       alert(`Error: ${err}`);
+    }
+  };
+
+  const copyShareTitle = async () => {
+    try {
+      const { title } = await fetch(
+        "https://jsonplaceholder.typicode.com/todos/6"
+      ).then((it) => it.json());
+      const shareData = {
+        title: `https://google.com.br/search?q=${title}`,
+      };
+      await navigator.share(shareData);
+      alert("copiado com sucesso");
+    } catch (err) {
+      alert(`Error: ${err}`);
+    }
+  };
+
+  const copyShareTitleUrl = async () => {
+    try {
+      const { title } = await fetch(
+        "https://jsonplaceholder.typicode.com/todos/6"
+      ).then((it) => it.json());
+      const shareData = {
+        title: "titulo do share",
+        url: `https://google.com.br/search?q=${title}`,
+      };
+      await navigator.share(shareData);
+      alert("copiado com sucesso");
+    } catch (err) {
+      alert(`Error: ${err}`);
+    }
+  };
+
+  const dynamicCopyOrShare = () => {
+    if (typeof navigator?.share !== "undefined") {
+      copyShareUrl();
+    } else {
+      clipboardUserAgent();
     }
   };
 
@@ -71,8 +105,17 @@ const Home = () => {
       <button onClick={clipboardUserAgent} className="px-2 bg-black text-white">
         botao copy
       </button>
-      <button onClick={copyShare} className="px-2 bg-black text-white">
-        botao share
+      <button onClick={copyShareUrl} className="px-2 bg-black text-white">
+        botao share url
+      </button>
+      <button onClick={copyShareTitle} className="px-2 bg-black text-white">
+        botao share title
+      </button>
+      <button onClick={copyShareTitleUrl} className="px-2 bg-black text-white">
+        botao share title with url
+      </button>
+      <button onClick={dynamicCopyOrShare} className="px-2 bg-black text-white">
+        botao dinamico copy share url
       </button>
     </div>
   );
