@@ -51,8 +51,8 @@ const Home = () => {
         "https://jsonplaceholder.typicode.com/todos/6"
       ).then((it) => it.json());
       const shareData = {
-        title: "Compartilhe este produto",
-        url: `https://${title}.com.br`,
+        title: `https://google.com.br/search?q=${title}`,
+        url: `https://google.com.br/search?q=${title}`,
       };
       await navigator.share(shareData);
       alert("copiado com sucesso");
